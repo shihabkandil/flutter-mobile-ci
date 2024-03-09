@@ -59,3 +59,24 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Start release build
         run: flutter build appbundle
+
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # install flutter sdk
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.19.3"
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build iOS app
+        run: flutter build ios --release --no-codesign
+
