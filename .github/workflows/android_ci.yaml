@@ -1,0 +1,42 @@
+name: Android CI
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+  # To allow the workflow to run manyally from the actions tab in github repository
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    # Choosing type of runner for this job
+    runs-on: ubuntu-latest
+
+    steps:
+      # Reads repository under $GITHUB_WORKSPACE so job can access it
+      - uses: actions/checkout@v4
+      # install java sdk
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "12.x"
+          # cache java sdk for faster future runs
+          cache: 'gradle'
+
+      # install flutter sdk
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.16.0"
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run unit tests
+        run: flutter test
+
+      # Runs a set of commands using the runners shell
+      - name: Start release build
+        run: flutter build appbundle
