@@ -4,9 +4,8 @@ on:
   pull_request:
     branches: [ "develop" ]
 
-  # To allow the workflow to run manyally from the actions tab in github repository
-  workflow_dispatch:
-
+  # Un-comment:  To allow the workflow to run manyally from the actions tab in github repository
+  # workflow_dispatch:
 
 jobs:
   android:
@@ -23,18 +22,6 @@ jobs:
           java-version: "17.x"
           # cache java sdk for faster future runs
           cache: 'gradle'
-
-      - name: Setup Android SDK
-        uses: amyu/setup-android@v4
-        with:
-          # default: 34
-          # It will always be installed.
-          sdk-version: 34
-          # default: 33.0.2
-          # build tools version
-          # see https://developer.android.com/studio/releases/build-tools
-          # It will always be installed.
-          build-tools-version: 33.0.2
 
       - uses: actions/cache@v2
         with:
@@ -65,7 +52,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # install flutter sdk
       - uses: subosito/flutter-action@v2
@@ -76,6 +63,9 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Run unit tests
+        run: flutter test
 
       - name: Build iOS app
         run: flutter build ios --release --no-codesign
