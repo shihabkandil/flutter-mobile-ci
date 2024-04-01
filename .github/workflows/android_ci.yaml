@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Reads repository under $GITHUB_WORKSPACE so job can access it
+      - uses: actions/checkout@v4
+      
       # install flutter sdk
       - uses: subosito/flutter-action@v2
         with:
