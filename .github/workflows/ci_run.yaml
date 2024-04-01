@@ -1,8 +1,9 @@
-name: CI run
+name: iOS/Android CI
 
 on:
-  pull_request:
-    branches: [ "develop" ]
+  push:
+    branches: 
+    - develop
 
   # Un-comment:  To allow the workflow to run manyally from the actions tab in github repository
   # workflow_dispatch:
