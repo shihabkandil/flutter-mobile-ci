@@ -1,4 +1,4 @@
-name: Android CI cache test run
+name: Android APK build
 
 on:
   push:
@@ -32,4 +32,4 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Start release build
-        run: flutter build appbundle
+        run: flutter build apk
