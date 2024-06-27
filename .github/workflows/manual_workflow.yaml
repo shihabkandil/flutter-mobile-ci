@@ -3,6 +3,13 @@ name: CI/CD Workflow dispatch
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: 'Select the environment'
+        required: true
+        default: 'Development'
+        options:
+          - 'Development'
+          - 'Production'
       version:
         description: 'Enter the version number'
         required: true
@@ -17,11 +24,12 @@ on:
         default: '1'
       release_notes:
         description: 'Enter build release notes'
-        required: true
+        required: false
         default: ''  
 
 jobs:
   android:
+    environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
 
     steps:
@@ -52,7 +60,17 @@ jobs:
       run: flutter pub get
       
     - name: Build release Apk
+      id: build_apk
       run: flutter build apk      
+      
+    - name: Upload artifact to Firebase App Distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
+      with:
+        appId: ${{secrets.FIREBASE_APP_ID}}
+        serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+        groups: internal
+        file: build/app/outputs/flutter-apk/app-release.apk
+        releaseNotesFile: ./release-notes.txt
 
   ios:
     runs-on: macos-latest
