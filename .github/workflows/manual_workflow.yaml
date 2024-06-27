@@ -1,0 +1,84 @@
+name: CI/CD Workflow dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Enter the version number'
+        required: true
+        default: '1.0.0'
+      android_build:
+        description: 'Enter the build number for Android'
+        required: true
+        default: '1'
+      ios_build:
+        description: 'Enter the build number for iOS'
+        required: true
+        default: '1'
+      release_notes:
+        description: 'Enter build release notes'
+        required: true
+        default: ''  
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Log version and build numbers (for Testing only)
+      run: |
+        echo "Version: ${{ github.event.inputs.version }}"
+        echo "Android Build: ${{ github.event.inputs.android_build }}"
+        echo "iOS Build: ${{ github.event.inputs.ios_build }}"
+        echo "Release notes: ${{ github.event.inputs.release_notes }}"
+
+    - name: Create release notes file
+      run: echo "${{ github.event.inputs.release_notes }}" > ./release-notes.txt     
+
+    - name: Update version & android build number
+      run: |
+        sed -Ei "s/^version: (.*)/version: ${{github.event.inputs.version}}+$((${{github.event.inputs.android_build}}))/g" ./pubspec.yaml
+
+    - name: Install Flutter SDK
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: "3.22.1"
+        channel: 'stable'
+        cache: true
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Build release Apk
+      run: flutter build apk      
+
+  ios:
+    runs-on: macos-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+      
+    - name: Update version & ios build number
+      run: |
+        sed -Ei "s/^version: (.*)/version: ${{github.event.inputs.version}}+$((${{github.event.inputs.ios_build}}))/g" ./pubspec.yaml
+
+    - name: Install Flutter SDK
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: "3.22.1"
+        channel: 'stable'
+        cache: true
+
+    - name: Get dependencies
+      run: flutter pub get
+
+    # - name: Run unit tests
+    #   run: flutter test
+
+    - name: Build iOS app
+      run: flutter build ios --release --no-codesign
+        
+        
