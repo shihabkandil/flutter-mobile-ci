@@ -4,10 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select the environment'
-        required: true
-        default: 'Development'
-        options: ['Development', 'Production']
+        type: environment
+        description: Select the environment
       version:
         description: 'Enter the version number'
         required: true
