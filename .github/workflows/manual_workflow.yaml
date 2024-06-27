@@ -40,7 +40,7 @@ jobs:
 
     - name: Update version & android build number
       run: |
-        sed -Ei "s/^version: (.*)/version: ${{github.event.inputs.version}}+$((${{github.event.inputs.android_build}}))/g" ./pubspec.yaml
+        sed -Ei "s/^version: (.*)/version: ${{ github.event.inputs.version }}+$((${{ github.event.inputs.android_build }}))/g" ./pubspec.yaml
 
     - name: Install Flutter SDK
       uses: subosito/flutter-action@v2
@@ -63,7 +63,7 @@ jobs:
       
     - name: Update version & ios build number
       run: |
-        sed -Ei "s/^version: (.*)/version: ${{github.event.inputs.version}}+$((${{github.event.inputs.ios_build}}))/g" ./pubspec.yaml
+        sed -i '' -E "s/^version: (.*)/version: ${{ github.event.inputs.version }}+${{ github.event.inputs.ios_build }}/g" ./pubspec.yaml
 
     - name: Install Flutter SDK
       uses: subosito/flutter-action@v2
