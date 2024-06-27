@@ -52,7 +52,17 @@ jobs:
       run: flutter pub get
       
     - name: Build release Apk
+      id: build_apk
       run: flutter build apk      
+      
+    - name: Upload artifact to Firebase App Distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
+      with:
+        appId: ${{secrets.FIREBASE_APP_ID}}
+        serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+        groups: internal
+        file: build/app/outputs/flutter-apk/app-release.apk
+        releaseNotesFile: ./release-notes.txt
 
   ios:
     runs-on: macos-latest
